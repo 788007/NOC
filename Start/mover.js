@@ -1,4 +1,3 @@
-//creates ball objects when called w/ new
 function Mover(radius, loc, vel, acc, color){
   this.radius = radius;
   this.color = color;
@@ -7,15 +6,43 @@ function Mover(radius, loc, vel, acc, color){
   this.loc = loc;
   this.vel = vel;
   this.acc = acc;
-  //this.momentum = this.vel.scalarMult(this.mass);
 }
 
+Mover.prototype.momentum = function(){
+  return vector2d.scalarMult(this.vel, this.mass);
+}
+
+Mover.prototype.kineticEnergy = function(){
+  var v = this.vel.magnitude();
+  return this.mass * v * v / 2;
+}
+
+Mover.prototype.applyAttractorForce = function(){
+  var r = vector2d.subtract(attractor.loc, this.loc);
+  var dir = vector2d.normalize(r);
+  var attr_force = vector2d.scalarMult(dir, 17 / r.magnitude());
+  this.acc.add(attr_force);
+}
+
+Mover.prototype.applyRepellerForce = function(){
+  var r = vector2d.subtract(this.loc, repeller.loc);
+  var dir = vector2d.normalize(r);
+  var rep_force = vector2d.scalarMult(dir, 15 / r.magnitude());
+  this.acc.add(rep_force);
+}
 
 //updates ball position
 Mover.prototype.update = function () {
   this.checkEdges();
-  this.loc.add(this.vel);
+  if(this !== attractor && this !== repeller){
+    this.applyAttractorForce();
+    this.applyRepellerForce();
+  }
   this.vel.add(this.acc);
+  this.vel.limit(10);
+  //console.log(this.vel.magnitude());
+  this.loc.add(this.vel);
+  this.acc.scalarMult(0);
 }
 
 //reverses direction when ball hits edge

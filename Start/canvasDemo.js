@@ -1,10 +1,9 @@
-
-
 window.onload = init; // Wait for the page to load before we begin animation
 var canvas;
 var ctx;// This is a better name for a global variable
 var balls = [];
 var attractor;
+var repeller;
 
 function init(){
   //get the canvas
@@ -20,9 +19,17 @@ function init(){
   canvas.style.backgroundColor = 'rgba(0,44,55, .5)';
   // get the context
   ctx = canvas.getContext('2d'); // This is the context
+
+  makeBalls();
+  makeAttractor();
+  makeRepeller();
+  animate(); // Call to your animate function
+}
+
+function makeBalls(){
   //create array of balls
-  for (var i = 0; i < 5; i++){
-    var radius = Math.random()*20 + 10;
+  for (var i = 0; i < 75; i++){
+    var radius = Math.random()*10 + 4;
     var color = randomColor();
     //set location vector
     var x = Math.random() * (canvas.width-20) + 10;
@@ -37,11 +44,20 @@ function init(){
 
     balls[i] = new Mover(radius, loc, vel, acc, color);
   }
-  //create attractor boid
-  var attrLoc = new vector2d(canvas.width/2, canvas.height/2);
-  var attrVel = new vector2d(2, 2);
-  attractor = new Mover(20, attrLoc, attrVel, new vector2d(0, 0), 'rgb(255, 0,0)');
-  animate(); // Call to your animate function
+}
+
+function makeAttractor(){
+  var loc = new vector2d(canvas.width * 3/4, canvas.height * 3/4);
+  var theta = Math.random() * 2 * Math.PI;
+  var vel = new vector2d(undefined, undefined, 2, theta);
+  attractor = new Mover(25, loc, vel, new vector2d(0, 0), 'red');
+}
+
+function makeRepeller(){
+  var loc = new vector2d(canvas.width/4, canvas.height/4);
+  var theta = Math.random() * 2 * Math.PI;
+  var vel = new vector2d(undefined, undefined, 2, theta);
+  repeller = new Mover(25, loc, vel, new vector2d(0,0), 'blue');
 }
 
 //returns a random pastel color
@@ -51,6 +67,7 @@ function randomColor(){
   var pastel = 'hsl(' + hue + ', 100%, ' + l + '%)';
   return pastel;
 }
+
 
 
 // function printMouseLoc(e){
@@ -74,4 +91,5 @@ function animate(){
     balls[i].draw();
   }
   attractor.draw();
+  repeller.draw();
 }

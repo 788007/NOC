@@ -41,9 +41,8 @@ vector2d.prototype.normalize = function(){
 }
 
 vector2d.prototype.setMag = function(m){
-  var t = this.theta();
-  this.x = m * Math.cos(t);
-  this.y = m * Math.sin(t);
+  this.normalize();
+  this.scalarMult(m);
 }
 
 vector2d.prototype.setDirection = function(theta){
@@ -53,7 +52,7 @@ vector2d.prototype.setDirection = function(theta){
 }
 
 vector2d.prototype.limit = function(max){
-  if(this.magnitude > max){
+  if(this.magnitude() > max){
     this.setMag(max);
   }
 }
@@ -110,10 +109,11 @@ vector2d.random = function(xMin, xMax, yMin, yMax){
 
 
 
-// var a = new vector2d(3, 4);
+var a = new vector2d(10, 4);
+console.log(a.magnitude());
 // var b = new vector2d(1, 0);
 //
-// a.normalize();
-// console.log(a.x, a.y);
+console.log(a.x, a.y);
+
+console.log(a.magnitude());
 //
-// console.log(vector2d.angleBetween(a, b));
